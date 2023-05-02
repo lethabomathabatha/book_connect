@@ -13,11 +13,40 @@ import { authors } from "./data";
 import { genres } from "./data";
 import { books } from "./data";
 
+
+// User story 1 - As a user, I want to view a list of book previews, by title and author, so that I can discover new books to read 
+
+
+
+
 matches = books
 page = 1;
 
 if (!books && !Array.isArray(books)) throw new Error('Source required') 
 if (!range && range.length < 2) throw new Error('Range must be an array with two numbers')
+
+
+// accessing settings
+const settingsForm = document.getElementById('settings');
+const themeOptions = document.querySelector('[data-settings-theme]');
+
+themeOptions.addEventListener('change', (event) => {
+    const selectedOption = this.value;
+
+    if (selectedOption === 'day') {
+        applyStyles(day);
+    } else if (selectedOption === 'night') {
+        applyStyles(night);
+    }
+});
+
+// function to apply styles to the page
+function applyStyles(styles) {
+    const root = document.documentElement;
+    root.style.setProperty9('--color-dark', `rgb(${styles.dark})`);
+    root.style.setProperty9('--color-light', `rgb(${styles.light})`);
+}
+
 
 day = {
     dark: '10, 10, 20',
