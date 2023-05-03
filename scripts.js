@@ -7,39 +7,11 @@
 // 6. As a user, I want to filter books by author so that I can find books to read by authors that I enjoy.
 // 7. As a user, I want to filter books by genre so that I can find books to read in genres that I enjoy.
 // 8. As a user, I want to toggle between dark and light modes so that I can use the app comfortably at night.
-
 import { BOOKS_PER_PAGE } from "./data.js";
 import { authors } from "./data.js";
 import { genres } from "./data.js";
 import { books } from "./data.js";
-
 //Global query selectors:
-
-// settings query selectors
-const settings = document.querySelector('[data-header-settings]'); // still to locate the query selector
-const settingsOverlay = document.querySelector('[data-settings-overlay]');
-const settingsForm = document.querySelector('[data-settings-form]');
-const theme = document.querySelector('[data-settings-theme]');
-const cancelSettings = document.querySelector('[data-settings-cancel]');
-
-// search query selectors
-const search = document.querySelector(".header__button"); // accesses the search button
-const searchOverlay = document.querySelector('[data-search-overlay]');
-const searchForm = document.querySelector('[data-search-form]');
-const searchCancel = document.querySelector('[data-search-cancel]');
-
-
-const list = document.querySelector("[data-list-items]");
-const loadMore = document.querySelector("[data-list-button]");
-const previewOverlay = document.querySelector("[data-list-active]");
-const closeBtn = document.querySelector("[data-list-close]")
-const overlayBtn = previewOverlay.querySelector('.overlay__button')
-overlayBtn.style.outline = 0; // Fixing the outline bug 
-const overlayBlur = previewOverlay.querySelector(".overlay__blur");
-const overlayImage = previewOverlay.querySelector(".overlay__image");
-const titleOverlay = previewOverlay.querySelector(".overlay__title");
-const dataOverlay = previewOverlay.querySelector(".overlay__data");
-const infoOverlay = previewOverlay.querySelector("[data-list-description]");
 
 
 // Theme settings functionality
@@ -47,9 +19,7 @@ settings.addEventListener("click", () => {
     settingsOverlay.show();
     settingsForm.classList.toggle('hidden');
     document.querySelector('[data-settings-overlay]').classList.toggle('hidden');
-
 });
-
 // Cancel settings functionality
 cancelSettings.addEventListener("click", () => {
     settingsOverlay.close();
@@ -57,56 +27,56 @@ cancelSettings.addEventListener("click", () => {
     document.querySelector('[data-settings-overlay]').classList.toggle('hidden');
 });
 
-
 // Apply theme selection when user selects 'day' or 'night' mode
 const day = {
     dark: '10, 10, 20',
     light: '255, 255, 255',
 };
-
 const night = {
-    dark: '255, 255, 255',
-    light: '10, 10, 20',
+dark: '255, 255, 255',
+light: '10, 10, 20',
 };
 
-
-theme.addEventListener('click', (e) => {
-    if (e.target.value === 'day') {
-        applyStyles(day);
-    } else {
-        applyStyles(night);
-    }
-});
+// function to update CSS variables
+function setTheme(theme) {
+    const root = document.documentElement;
+    root.style.setProperty('--color-dark', `rgb(${theme.dark})`);
+    root.style.setProperty('--color-light', `rgb(${theme.light})`);
+  }
+  
+  // event listener for theme selection
+  document.querySelector('[data-settings-form]').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const theme = document.querySelector('[data-settings-theme]').value === 'day' ? day : night;
+    setTheme(theme);
+    settingsOverlay.close();
+    settingsForm.classList.toggle('hidden');
+    document.querySelector('[data-settings-overlay]').classList.toggle('hidden');
+  });
 
 // access the header icon. When clicked, it will present options to toggle the dark/light mode
 // const headerIcon = document.querySelector('[data-header-settings]');
 //const settingsForm = document.querySelector('[data-settings-form]');
 // const settingsOverlay = document.querySelector('[data-settings-overlay]');
 
-
 // inital theme based on user's preference stored in local storage
 // const initialTheme = localStorage.getItem('theme') || 'day';
 // applyTheme(initialTheme);
-
 
 // initial theme based on time of day
 // const hour = new Date().getHours();
 // const isDayTime = hour > 6 && hour < 18;
 // const openingTheme = isDayTime ? 'day' : 'night';
 // applyTheme(openingTheme);
-
 // event listener for when the header icon is clicked, it should display a theme menu overlay with options to toggle the dark/light mode
 // headerIcon.addEventListener("click", () => {
 //     settingsOverlay.showModal();
 //     // document.querySelector('[data-settings-form]').classList.toggle('hidden');
-
 // });
-
 // // event listener for when the cancel button is clicked, it should close the theme menu overlay
 // settingsOverlay.querySelector('[data-settings-close-button]').addEventListener('click', () => {
 //     settingsOverlay.close();
 // });
-
 // // event listener for when the save button is clicked, it should save the user's theme preference to local storage and close the theme menu overlay
 // settingsForm.addEventListener('submit', (event) => {
 //     event.preventDefault();
@@ -115,7 +85,6 @@ theme.addEventListener('click', (e) => {
 //     applyTheme(selectedTheme);
 //     settingsOverlay.close();
 // });
-
 
 
 // // function to apply styles to the page
@@ -127,14 +96,11 @@ theme.addEventListener('click', (e) => {
 // }
 
 
-
 // search functionality
-
 // const search = document.querySelector('[data-header-search]');
 // const searchOverlay = document.querySelector('[data-search-overlay]');
 // const searchForm = document.querySelector('[data-search-form]');
 // const searchCancel = document.querySelector('[data-search-cancel]');
-
 /**
 * @param {Event} event handles the event when the search icon is clicked,
 */
@@ -145,12 +111,10 @@ search.addEventListener("click", () => {
     searchForm.classList.toggle('hidden');
     document.querySelector('[data-search-overlay]').classList.toggle('hidden');
 });
-
 // event listener for when the cancel button is clicked, it should close the search menu overlay
 searchCancel.addEventListener('click', () => {
     searchOverlay.close();
 });
-
 
 
 
@@ -160,17 +124,14 @@ const applyStyles = (styles) => {
 const root = document.documentElement;
 const settingsForm = document.getElementById('settings');
 const themeOptions = document.querySelector('[data-settings-theme]');
-
 themeOptions.addEventListener('change', (event) => {
     const selectedOption = this.value;
-
     if (selectedOption === 'day') {
         applyStyles(day);
     } else if (selectedOption === 'night') {
         applyStyles(night);
     }
 });
-
 // function to apply styles to the page
 function applyStyles(styles) {
     const root = document.documentElement;
@@ -178,19 +139,15 @@ function applyStyles(styles) {
     root.style.setProperty9('--color-light', `rgb(${styles.light})`);
 }
 
-
 const day = {
     dark: '10, 10, 20',
     light: '255, 255, 255',
 };
-
 const night = {
     dark: '255, 255, 255',
     light: '10, 10, 20',
 };
-
 }
-
 
 
 
@@ -203,53 +160,43 @@ const night = {
 /*
 // Get the element where the book previews will be added
 const bookList = document.querySelector('.book-list');
-
 // Create a function to add a book preview to the list
 function addBookPreview(book) {
   // Create a div to hold the book preview
   const bookPreview = document.createElement('div');
   bookPreview.classList.add('book-preview');
-
   // Create an image element for the book cover
   const bookCover = document.createElement('img');
   bookCover.src = book.cover;
   bookCover.alt = `${book.title} cover`;
   bookPreview.appendChild(bookCover);
-
   // Create a div to hold the book information
   const bookInfo = document.createElement('div');
   bookInfo.classList.add('book-info');
   bookPreview.appendChild(bookInfo);
-
   // Create an h2 element for the book title
   const bookTitle = document.createElement('h2');
   bookTitle.textContent = book.title;
   bookInfo.appendChild(bookTitle);
-
   // Create a p element for the book author
   const bookAuthor = document.createElement('p');
   bookAuthor.textContent = `by ${book.author}`;
   bookInfo.appendChild(bookAuthor);
-
   // Create a p element for the book summary
   const bookSummary = document.createElement('p');
   bookSummary.textContent = book.summary;
   bookInfo.appendChild(bookSummary);
-
   // Create a p element for the book publication date
   const bookDate = document.createElement('p');
   bookDate.textContent = `Published: ${book.date}`;
   bookInfo.appendChild(bookDate);
-
   // Add the book preview to the book list
   bookList.appendChild(bookPreview);
 }
-
 // Loop through the books array and add a preview for each book
 for (const book of books) {
   addBookPreview(book);
 }
-
 
 */
 /*
@@ -260,17 +207,14 @@ function applyStyles(styles) {
     root.style.setProperty9('--color-light', `rgb(${styles.light})`);
 }
 
-
 const day = {
     dark: '10, 10, 20',
     light: '255, 255, 255',
 };
-
 const night = {
     dark: '255, 255, 255',
     light: '10, 10, 20',
 };
-
 */
 /*
 // Render books to page
@@ -323,7 +267,6 @@ function renderBooks() {
 
 
 
-
 // preview function:
 const innerHTML = (book, index) => {
     const bookPreview = document.createElement("div");
@@ -336,19 +279,14 @@ const innerHTML = (book, index) => {
     <p>${book.description}</p>`
 }
 
-
 for (let i = 0; i < BOOKS_PER_PAGE; i++) {
     const book = books[i];
     const bookPreview = innerHTML(book, i);
     list.appendChild(bookPreview);
 }
-
 let loaded = 0;
-
 const loadMore = () => {
-
 }
-
 
 
 
@@ -366,13 +304,10 @@ const loadMore = () => {
 
 
 
-
 // User story 1 - As a user, I want to view a list of book previews, by title and author, so that I can discover new books to read 
 const root = document.querySelector(":root");
 
-
 // create HTML elements for each book and append them to the container/body
-
 books.forEach((book) => {
     const bookCard = document.createElement("div");
     bookCard.classList.add("book-card");
@@ -398,7 +333,6 @@ books.forEach((book) => {
   });
 
 
-
   // global query selectors:
   const list   = document.querySelector("[data-list-items]");
   const activeOverlay = document.querySelector("[data-list-active]");
@@ -407,21 +341,16 @@ books.forEach((book) => {
   const subtitleOverlay = document.querySelector("[data-list-subtitle]");
   const descriptionOverlay = document.querySelector("[data-list-description]");
 
-
 matches = books
 page = 1;
-
 if (!books && !Array.isArray(books)) throw new Error('Source required') 
 if (!range && range.length < 2) throw new Error('Range must be an array with two numbers')
-
 
 
 fragment = document.createDocumentFragment()
 const extracted = books.slice(0, 36)
 
-
 // preview function
-
 
 for ({ author, image, title, id }; extracted; i++) {
     const preview = createPreview({
@@ -430,49 +359,38 @@ for ({ author, image, title, id }; extracted; i++) {
         image,
         title
     })
-
     fragment.appendChild(preview)
 }
-
 data-list-items.appendChild(fragment)
-
 genres = document.createDocumentFragment()
 element = document.createElement('option')
 element.value = 'any'
 element = 'All Genres'
 genres.appendChild(element)
-
 for ([id, name]; Object.entries(genres); i++) {
     document.createElement('option')
     element.value = value
     element.innerText = text
     genres.appendChild(element)
 }
-
 data-search-genres.appendChild(genres)
-
 authors = document.createDocumentFragment()
 element = document.createElement('option')
 element.value = 'any'
 element.innerText = 'All Authors'
 authors.appendChild(element)
-
 for ([id, name];Object.entries(authors); id++) {
     document.createElement('option')
     element.value = value
     element = text
     authors.appendChild(element)
 }
-
 data-search-authors.appendChild(authors)
-
 data-settings-theme.value === window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day'
 v = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches? 'night' | 'day'
-
 documentElement.style.setProperty('--color-dark', css[v].dark);
 documentElement.style.setProperty('--color-light', css[v].light);
 data-list-button = "Show more (books.length - BOOKS_PER_PAGE)"
-
 data-list-button.disabled = !(matches.length - [page * BOOKS_PER_PAGE] > 0)
 */
 /*
@@ -481,57 +399,45 @@ data-list-button.innerHTML = /* html */
    [ '<span>Show more</span>',
     '<span class="list__remaining"> (${matches.length - [page * BOOKS_PER_PAGE] > 0 ? matches.length - [page * BOOKS_PER_PAGE] : 0})</span>',
 ]
-
 data-search-cancel.click() { data-search-overlay.open === false }
 data-settings-cancel.click() { querySelect(data-settings-overlay).open === false }
 data-settings-form.submit() { actions.settings.submit }
 data-list-close.click() { data-list-active.open === false }
-
 data-list-button.click() {
     document.querySelector([data-list-items]).appendChild(createPreviewsFragment(matches, page x BOOKS_PER_PAGE, {page + 1} x BOOKS_PER_PAGE]))
     actions.list.updateRemaining()
     page = page + 1
 }
-
 data-header-search.click() {
     data-search-overlay.open === true ;
     data-search-title.focus();
 }
-
 data-search-form.click(filters) {
     preventDefault()
     const formData = new FormData(event.target)
     const filters = Object.fromEntries(formData)
     result = []
-
     for (book; booksList; i++) {
         titleMatch = filters.title.trim() = '' && book.title.toLowerCase().includes[filters.title.toLowerCase()]
         authorMatch = filters.author = 'any' || book.author === filters.author
-
         {
             genreMatch = filters.genre = 'any'
             for (genre; book.genres; i++) { if singleGenre = filters.genre { genreMatch === true }}}
         }
-
         if titleMatch && authorMatch && genreMatch => result.push(book)
     }
-
     if display.length < 1 
     data-list-message.class.add('list__message_show')
     else data-list-message.class.remove('list__message_show')
     
-
     data-list-items.innerHTML = ''
     const fragment = document.createDocumentFragment()
     const extracted = source.slice(range[0], range[1])
-
     for ({ author, image, title, id }; extracted; i++) {
         const { author: authorId, id, image, title } = props
-
         element = document.createElement('button')
         element.classList = 'preview'
         element.setAttribute('data-preview', id)
-
         element.innerHTML = /* html */ /*`
             <img
                 class="preview__image"
@@ -543,7 +449,6 @@ data-search-form.click(filters) {
                 <div class="preview__author">${authors[authorId]}</div>
             </div>
         `
-
         fragment.appendChild(element)
     }
     
@@ -551,16 +456,13 @@ data-search-form.click(filters) {
     initial === matches.length - [page * BOOKS_PER_PAGE]
     remaining === hasRemaining ? initial : 0
     data-list-button.disabled = initial > 0
-
     data-list-button.innerHTML = /* html */ /*`
         <span>Show more</span>
         <span class="list__remaining"> (${remaining})</span>
     `
-
     window.scrollTo({ top: 0, behavior: 'smooth' });
     data-search-overlay.open = false
 }
-
 data-settings-overlay.submit; {
     preventDefault()
     const formData = new FormData(event.target)
@@ -569,11 +471,9 @@ data-settings-overlay.submit; {
     document.documentElement.style.setProperty('--color-light', css[result.theme].light);
     data-settings-overlay.open === false
 }
-
 data-list-items.click() {
     pathArray = Array.from(event.path || event.composedPath())
     active;
-
     for (node; pathArray; i++) {
         if active break;
         const previewId = node?.dataset?.preview
