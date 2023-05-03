@@ -12,6 +12,35 @@ import { authors } from "./data.js";
 import { genres } from "./data.js";
 import { books } from "./data.js";
 //Global query selectors:
+// settings query selectors
+const settings = document.querySelector('[data-header-settings]'); // still to locate the query selector
+const settingsOverlay = document.querySelector('[data-settings-overlay]');
+const settingsForm = document.querySelector('[data-settings-form]');
+const theme = document.querySelector('[data-settings-theme]');
+const cancelSettings = document.querySelector('[data-settings-cancel]');
+
+// search query selectors
+const search = document.querySelector(".header__button"); // accesses the search button
+const searchOverlay = document.querySelector('[data-search-overlay]');
+const searchForm = document.querySelector('[data-search-form]');
+const searchCancel = document.querySelector('[data-search-cancel]');
+const titleMatch = document.querySelector('[data-search-title]');
+const genreMatch = document.querySelector('[data-search-genres]');
+const genreLabel = document.querySelector('[data-search-genres]');
+const authorMatch = document.querySelector('[data-search-authors]');
+
+
+const list = document.querySelector("[data-list-items]");
+const loadMore = document.querySelector("[data-list-button]");
+const previewOverlay = document.querySelector("[data-list-active]");
+const closeBtn = document.querySelector("[data-list-close]")
+const overlayBtn = previewOverlay.querySelector('.overlay__button')
+const overlayBlur = previewOverlay.querySelector(".overlay__blur");
+const overlayImage = previewOverlay.querySelector(".overlay__image");
+const titleOverlay = previewOverlay.querySelector(".overlay__title");
+const dataOverlay = previewOverlay.querySelector(".overlay__data");
+const infoOverlay = previewOverlay.querySelector("[data-list-description]");
+
 
 
 // Theme settings functionality
@@ -20,6 +49,34 @@ settings.addEventListener("click", () => {
     settingsForm.classList.toggle('hidden');
     document.querySelector('[data-settings-overlay]').classList.toggle('hidden');
 });
+
+
+const day = {
+    dark: '10, 10, 20',
+    light: '255, 255, 255',
+};
+const night = {
+    dark: '255, 255, 255',
+    light: '10, 10, 20',
+};
+
+// function to update CSS variables
+function setTheme(theme) {
+  const root = document.documentElement;
+  root.style.setProperty('--color-dark', `rgb(${theme.dark})`);
+  root.style.setProperty('--color-light', `rgb(${theme.light})`);
+}
+
+// event listener for theme selection
+document.querySelector('[data-settings-form]').addEventListener('submit', (e) => {
+  e.preventDefault();
+  theme.value === 'day' ? day : night;
+  setTheme(theme);
+  settingsOverlay.close();
+  settingsForm.classList.toggle('hidden');
+  document.querySelector('[data-settings-overlay]').classList.toggle('hidden');
+});
+
 // Cancel settings functionality
 cancelSettings.addEventListener("click", () => {
     settingsOverlay.close();
@@ -27,80 +84,13 @@ cancelSettings.addEventListener("click", () => {
     document.querySelector('[data-settings-overlay]').classList.toggle('hidden');
 });
 
-// Apply theme selection when user selects 'day' or 'night' mode
-const day = {
-    dark: '10, 10, 20',
-    light: '255, 255, 255',
-};
-const night = {
-dark: '255, 255, 255',
-light: '10, 10, 20',
-};
-
-// function to update CSS variables
-function setTheme(theme) {
-    const root = document.documentElement;
-    root.style.setProperty('--color-dark', `rgb(${theme.dark})`);
-    root.style.setProperty('--color-light', `rgb(${theme.light})`);
-  }
-  
-  // event listener for theme selection
-  document.querySelector('[data-settings-form]').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const theme = document.querySelector('[data-settings-theme]').value === 'day' ? day : night;
-    setTheme(theme);
-    settingsOverlay.close();
-    settingsForm.classList.toggle('hidden');
-    document.querySelector('[data-settings-overlay]').classList.toggle('hidden');
-  });
-
-// access the header icon. When clicked, it will present options to toggle the dark/light mode
-// const headerIcon = document.querySelector('[data-header-settings]');
-//const settingsForm = document.querySelector('[data-settings-form]');
-// const settingsOverlay = document.querySelector('[data-settings-overlay]');
-
-// inital theme based on user's preference stored in local storage
-// const initialTheme = localStorage.getItem('theme') || 'day';
-// applyTheme(initialTheme);
-
-// initial theme based on time of day
-// const hour = new Date().getHours();
-// const isDayTime = hour > 6 && hour < 18;
-// const openingTheme = isDayTime ? 'day' : 'night';
-// applyTheme(openingTheme);
-// event listener for when the header icon is clicked, it should display a theme menu overlay with options to toggle the dark/light mode
-// headerIcon.addEventListener("click", () => {
-//     settingsOverlay.showModal();
-//     // document.querySelector('[data-settings-form]').classList.toggle('hidden');
-// });
-// // event listener for when the cancel button is clicked, it should close the theme menu overlay
-// settingsOverlay.querySelector('[data-settings-close-button]').addEventListener('click', () => {
-//     settingsOverlay.close();
-// });
-// // event listener for when the save button is clicked, it should save the user's theme preference to local storage and close the theme menu overlay
-// settingsForm.addEventListener('submit', (event) => {
-//     event.preventDefault();
-//     const selectedTheme = settingsForm.elements.theme.value;
-//     localStorage.setItem('theme', selectedTheme);
-//     applyTheme(selectedTheme);
-//     settingsOverlay.close();
-// });
 
 
-// // function to apply styles to the page
-// function applyTheme(theme) {
-//     const colorScheme = theme === 'day' ? day : night;
-//     Object.keys(colorScheme).forEach(key => {
-//         document.documentElement.style.setProperty(`--color-${key}`, colorScheme[key]);
-//     });
-// }
+
 
 
 // search functionality
-// const search = document.querySelector('[data-header-search]');
-// const searchOverlay = document.querySelector('[data-search-overlay]');
-// const searchForm = document.querySelector('[data-search-form]');
-// const searchCancel = document.querySelector('[data-search-cancel]');
+
 /**
 * @param {Event} event handles the event when the search icon is clicked,
 */
@@ -110,16 +100,75 @@ search.addEventListener("click", () => {
     searchOverlay.show();
     searchForm.classList.toggle('hidden');
     document.querySelector('[data-search-overlay]').classList.toggle('hidden');
+    genreLabel.show();
 });
 // event listener for when the cancel button is clicked, it should close the search menu overlay
 searchCancel.addEventListener('click', () => {
     searchOverlay.close();
 });
 
+// get the search input value, genre and author
+const titles = books.map(book => book.title);
+const titleOptions = new Set (titles);
+
+for (const title of titleOptions) {
+    const option = document.createElement('option');
+    option.value = title;
+    titleMatch.add(option);
+}
+
+// titleMatch = (books, searchValue) => {
+//     return books.title.toLowerCase().includes(searchValue.toLowerCase());
+
+// };
+
+
+genreMatch.addEventListener('click', (event) => {
+    
+
+});
+authorMatch = (book, searchValue) => {
+    return authors[book.author].toLowerCase().includes(searchValue.toLowerCase());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // accessing settings
 // As a user, I want to toggle between dark and light modes so that I can use the app comfortably at night.
+/*
 const applyStyles = (styles) => {
 const root = document.documentElement;
 const settingsForm = document.getElementById('settings');
@@ -148,7 +197,7 @@ const night = {
     light: '10, 10, 20',
 };
 }
-
+*/
 
 
 
