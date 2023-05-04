@@ -17,7 +17,6 @@ import { books } from "./data.js";
 const settings = document.querySelector('[data-header-settings]'); // still to locate the query selector
 const settingsOverlay = document.querySelector('[data-settings-overlay]');
 const settingsForm = document.querySelector('[data-settings-form]');
-const theme = document.querySelector('[data-settings-theme]');
 const cancelSettings = document.querySelector('[data-settings-cancel]');
 
 // search query selectors
@@ -25,10 +24,14 @@ const search = document.querySelector(".header__button"); // accesses the search
 const searchBtn = document.querySelector('[data-header-search]'); // accesses the search button
 const searchOverlay = document.querySelector('[data-search-overlay]');
 const searchForm = document.querySelector('[data-search-form]');
+const searchInput = document.querySelector('[data-search-input]');
 const searchCancel = document.querySelector('[data-search-cancel]');
 const titleMatch = document.querySelector('[data-search-title]');
 const genreMatch = document.querySelector('[data-search-genres]');
 const authorMatch = document.querySelector('[data-search-authors]');
+const searchSubmitBtn = searchForm.querySelector('button[type="submit"]'); 
+
+
 
 
 
@@ -39,40 +42,33 @@ settings.addEventListener("click", () => {
     document.querySelector('[data-settings-overlay]').classList.toggle('hidden');
 });
 
+const theme = { 
+    day: {
+        dark: '10, 10, 20',
+        light: '255, 255, 255',
+    },
+    
+    night :{
+        dark: '255, 255, 255',
+        light: '10, 10, 20',
+    }
+    }
+   settingsForm.addEventListener('submit', (e) => {
+        e.preventDefault()
+        const formData = new FormData(e.target)
+        const result = Object.fromEntries(formData)
+        
+        document.documentElement.style.setProperty('--color-light', theme[result.theme].light);
+        document.documentElement.style.setProperty('--color-dark', theme[result.theme].dark);
+        settingsOverlay.close();       
+    });
 
-const day = {
-    dark: '10, 10, 20',
-    light: '255, 255, 255',
-};
-const night = {
-    dark: '255, 255, 255',
-    light: '10, 10, 20',
-};
-
-// function to update CSS variables
-function setTheme(theme) {
-  const root = document.documentElement;
-  root.style.setProperty('--color-dark', `rgb(${theme.dark})`);
-  root.style.setProperty('--color-light', `rgb(${theme.light})`);
-}
-
-// event listener for theme selection
-document.querySelector('[data-settings-form]').addEventListener('submit', (e) => {
-  e.preventDefault();
-  theme.value === 'night' ? night : day ;
-  setTheme(theme);
-  settingsOverlay.close();
-  settingsForm.classList.toggle('hidden');
-  document.querySelector('[data-settings-overlay]').classList.toggle('hidden');
-});
-
-// Cancel settings functionality
+// Cancel settings selection functionality
 cancelSettings.addEventListener("click", () => {
     settingsOverlay.close();
     settingsForm.classList.toggle('hidden');
     document.querySelector('[data-settings-overlay]').classList.toggle('hidden');
 });
-
 
 
 
@@ -107,7 +103,6 @@ const genrePlaceholderOption = document.createElement('option');
 genrePlaceholderOption.text = 'All Genres';
 genreSelect.add(genrePlaceholderOption);
 
-
 genreNames.forEach(genre => {
   const option = document.createElement('option');
   option.value = genre.toLowerCase();
@@ -125,7 +120,6 @@ const authorPlaceholderOption = document.createElement('option');
 authorPlaceholderOption.text = 'All Authors';
 authorSelect.add(authorPlaceholderOption);
 
-
 authorNames.forEach(author => {
   const option = document.createElement('option');
   option.value = author.toLowerCase();
@@ -135,34 +129,183 @@ authorNames.forEach(author => {
 
 
   // add options to the author select dropdown
-  authors.forEach((author) => {
+  authorNames.forEach((author) => {
     const option = document.createElement("option");
     option.value = author;
     option.text = author;
     authorMatch.appendChild(option);
   });
   
-// event listener for when the search button is clicked
-searchBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    const title = titleMatch.value.toUpperCase();
-    const genre = genreMatch.value;
-    const author = authorMatch.value;
-    const result = books.filter((book) => {
-      const { title: bookTitle, author: bookAuthor, genres: bookGenres } = book;
-      const titleMatch =
-        bookTitle.toUpperCase().includes(title) || title === "";
-      const authorMatch = bookAuthor === author || author === "";
-      const genreMatch = bookGenres.includes(genre) || genre === "";
-      return titleMatch && authorMatch && genreMatch;
+
+
+
+
+
+
+// retrieving books under a specific genre
+// use the number-letter string in genre to pull books with the corresponding genre number-letter string
+
+
+// Select DOM elements
+function renderBooks(books) {
+    const bookList = document.createElement('ul');
+    bookList.setAttribute('data-book-list', '');
+  
+    books.forEach((book) => {
+      const bookItem = document.createElement('li');
+      bookItem.innerHTML = `
+        <h2>${book.title}</h2>
+        <img src="${book.image}" alt="${book.title}">
+        <p>${book.description}</p>
+        <ul>
+          ${book.genres.map((genre) => `<li>${genre}</li>`).join('')}
+        </ul>
+      `;
+      bookList.appendChild(bookItem);
     });
-    console.log(result);
-  });
+  
+    const app = document.getElementById('app');
+    app.appendChild(bookList);
+  }
+
+
   
 
 
+/*
+// Display all books by default
+function displayBooks(booksArray) {
+  bookList.innerHTML = '';
+  booksArray.forEach(book => {
+    const li = document.createElement('li');
+    li.textContent = book.title;
+    bookList.appendChild(li);
+  });
+}
+
+displayBooks(books);
+
+// Filter books by search phrase
+function filterBooksBySearchPhrase(searchPhrase) {
+  const filteredBooks = books.filter(book =>
+    book.title.toLowerCase().includes(searchPhrase.toLowerCase())
+  );
+  displayBooks(filteredBooks);
+}
+
+// Filter books by author
+function filterBooksByAuthor(authorName) {
+  const filteredBooks = books.filter(book =>
+    book.author.toLowerCase().includes(authorName.toLowerCase())
+  );
+  displayBooks(filteredBooks);
+}
+
+// Filter books by genre
+function filterBooksByGenre(genreName) {
+  const filteredBooks = books.filter(book =>
+    book.genre.toLowerCase().includes(genreName.toLowerCase())
+  );
+  displayBooks(filteredBooks);
+}
+
+// Handle search form submission
+searchForm.addEventListener('submit', event => {
+  event.preventDefault();
+  const searchPhrase = searchInput.value.trim();
+  const authorName = authorSelect.value.trim();
+  const genreName = genreSelect.value.trim();
+
+  if (searchPhrase !== '') {
+    filterBooksBySearchPhrase(searchPhrase);
+  } else if (authorName !== '') {
+    filterBooksByAuthor(authorName);
+  } else if (genreName !== '') {
+    filterBooksByGenre(genreName);
+  } else {
+    displayBooks(books);
+  }
+});
+
+// Populate author select options
+const authorList = Object.values(authors);
+authorList.forEach(author => {
+  const option = document.createElement('option');
+  option.value = author.toLowerCase();
+  option.textContent = author;
+  authorSelect.appendChild(option);
+});
+
+// Populate genre select options
+const genreList = Object.values(genres);
+genreList.forEach(genre => {
+  const option = document.createElement('option');
+  option.value = genre.toLowerCase();
+  option.textContent = genre;
+  genreSelect.appendChild(option);
+});
+
+// Handle author select change
+authorSelect.addEventListener('change', event => {
+  const authorName = event.target.value.trim();
+  if (authorName !== '') {
+    filterBooksByAuthor(authorName);
+  } else {
+    displayBooks(books);
+  }
+});
+
+// Handle genre select change
+genreSelect.addEventListener('change', event => {
+  const genreName = event.target.value.trim();
+  if (genreName !== '') {
+    filterBooksByGenre(genreName);
+  } else {
+    displayBooks(books);
+  }
+});
+
+// Handle search input change
+searchInput.addEventListener('input', event => {
+  const searchPhrase = event.target.value.trim();
+  if (searchPhrase !== '') {
+    filterBooksBySearchPhrase(searchPhrase);
+  } else {
+    displayBooks(books);
+  }
+});
+*/
 
 
+
+
+
+/*
+const searchButton = document.querySelector('[data-search-form] button[type="submit"]');
+
+searchBtn.addEventListener('submit', (event)=> {
+  event.preventDefault(); // prevent the form from submitting
+
+  // genre filter
+  const selectedGenre = genreSelect.value;
+  const filteredBooksG = books.filter(function(book) {
+    return book.genres.includes(selectedGenre);
+  });
+
+  console.log(filteredBooksG); // replace with whatever you want to do with the filtered books
+
+
+    // author filter
+    const selectedAuthor = authorSelect.value;
+    const filteredBooks = books.filter(function(book) {
+        return book.author.includes(selectedAuthor);
+
+
+    });
+    console.log(filteredBooks); // replace with whatever you want to do with the filtered books
+
+});
+*/
 
 
 
@@ -218,13 +361,13 @@ titleMatch = () => {
 // };
 
 
-genreMatch.addEventListener('click', (event) => {
+// genreMatch.addEventListener('click', (event) => {
     
 
-});
-authorMatch = (book, searchValue) => {
-    return authors[book.author].toLowerCase().includes(searchValue.toLowerCase());
-}
+// });
+// authorMatch = (book, searchValue) => {
+//     return authors[book.author].toLowerCase().includes(searchValue.toLowerCase());
+// }
 
 
 
