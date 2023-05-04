@@ -11,6 +11,7 @@ import { BOOKS_PER_PAGE } from "./data.js";
 import { authors } from "./data.js";
 import { genres } from "./data.js";
 import { books } from "./data.js";
+
 //Global query selectors:
 // settings query selectors
 const settings = document.querySelector('[data-header-settings]'); // still to locate the query selector
@@ -21,25 +22,15 @@ const cancelSettings = document.querySelector('[data-settings-cancel]');
 
 // search query selectors
 const search = document.querySelector(".header__button"); // accesses the search button
+const searchBtn = document.querySelector('[data-header-search]'); // accesses the search button
 const searchOverlay = document.querySelector('[data-search-overlay]');
 const searchForm = document.querySelector('[data-search-form]');
 const searchCancel = document.querySelector('[data-search-cancel]');
 const titleMatch = document.querySelector('[data-search-title]');
 const genreMatch = document.querySelector('[data-search-genres]');
-const genreLabel = document.querySelector('[data-search-genres]');
 const authorMatch = document.querySelector('[data-search-authors]');
 
 
-const list = document.querySelector("[data-list-items]");
-const loadMore = document.querySelector("[data-list-button]");
-const previewOverlay = document.querySelector("[data-list-active]");
-const closeBtn = document.querySelector("[data-list-close]")
-const overlayBtn = previewOverlay.querySelector('.overlay__button')
-const overlayBlur = previewOverlay.querySelector(".overlay__blur");
-const overlayImage = previewOverlay.querySelector(".overlay__image");
-const titleOverlay = previewOverlay.querySelector(".overlay__title");
-const dataOverlay = previewOverlay.querySelector(".overlay__data");
-const infoOverlay = previewOverlay.querySelector("[data-list-description]");
 
 
 
@@ -70,7 +61,7 @@ function setTheme(theme) {
 // event listener for theme selection
 document.querySelector('[data-settings-form]').addEventListener('submit', (e) => {
   e.preventDefault();
-  theme.value === 'day' ? day : night;
+  theme.value === 'night' ? night : day ;
   setTheme(theme);
   settingsOverlay.close();
   settingsForm.classList.toggle('hidden');
@@ -99,23 +90,103 @@ cancelSettings.addEventListener("click", () => {
 search.addEventListener("click", () => {
     searchOverlay.show();
     searchForm.classList.toggle('hidden');
-    document.querySelector('[data-search-overlay]').classList.toggle('hidden');
-    genreLabel.show();
+    // document.querySelector('[data-search-overlay]').classList.toggle('hidden');
+    // document.querySelectorAll('[overlay__label]').show();
 });
+
 // event listener for when the cancel button is clicked, it should close the search menu overlay
 searchCancel.addEventListener('click', () => {
     searchOverlay.close();
 });
 
-// get the search input value, genre and author
-const titles = books.map(book => book.title);
-const titleOptions = new Set (titles);
+// extract the genre names from the genres object
+const genreNames = Object.values(genres).filter(val => typeof val === 'string');
+console.log(genreNames); 
 
-for (const title of titleOptions) {
-    const option = document.createElement('option');
-    option.value = title;
-    titleMatch.add(option);
-}
+const genreSelect = document.querySelector('[data-search-genres]');
+genreNames.forEach(genre => {
+  const option = document.createElement('option');
+  option.value = genre.toLowerCase();
+  option.text = genre;
+  genreSelect.add(option);
+});
+
+
+// // add options to the genre select dropdown
+// genres.forEach((genre) => {
+//     const option = document.createElement("option");
+//     option.value = genre;
+//     option.text = genre;
+//     genreMatch.appendChild(option);
+//   });
+  
+  // add options to the author select dropdown
+  authors.forEach((author) => {
+    const option = document.createElement("option");
+    option.value = author;
+    option.text = author;
+    authorMatch.appendChild(option);
+  });
+  
+// event listener for when the search button is clicked
+searchBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const title = titleMatch.value.toUpperCase();
+    const genre = genreMatch.value;
+    const author = authorMatch.value;
+    const result = books.filter((book) => {
+      const { title: bookTitle, author: bookAuthor, genres: bookGenres } = book;
+      const titleMatch =
+        bookTitle.toUpperCase().includes(title) || title === "";
+      const authorMatch = bookAuthor === author || author === "";
+      const genreMatch = bookGenres.includes(genre) || genre === "";
+      return titleMatch && authorMatch && genreMatch;
+    });
+    console.log(result);
+  });
+  
+
+
+
+
+
+
+/*
+// get the title, genre and author
+titleMatch = () => {
+    const searchBox = document.querySelector('[overlay__input]').value.toUpperCase();
+    const titleItems = document.books.title;
+    const titleName= documment.books.title('h3');
+
+    for (let i = 0; i < titleItems.length; i++) {
+        let matchFound = titleItems[i].textContent.toUpperCase().indexOf(searchBox)[0];
+        if (matchFound) {
+           let textValue = matchFound.titleItems  || matchFound.titleName;
+
+           if (textValue.toUpperCase().indexOf(searchBox) > -1) {
+                
+                titleItems[i].style.display = "block";
+           } else {
+                titleItems[i].style.display = "none";
+           }
+        }
+    }
+};
+*/
+
+
+
+
+
+
+// const titles = books.map(book => book.title);
+// const titleOptions = new Set (titles);
+
+// for (const title of titleOptions) {
+//     const option = document.createElement('option');
+//     option.value = title;
+//     titleMatch.add(option);
+// }
 
 // titleMatch = (books, searchValue) => {
 //     return books.title.toLowerCase().includes(searchValue.toLowerCase());
