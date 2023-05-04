@@ -32,8 +32,6 @@ const authorMatch = document.querySelector('[data-search-authors]');
 
 
 
-
-
 // Theme settings functionality
 settings.addEventListener("click", () => {
     settingsOverlay.show();
@@ -104,6 +102,12 @@ const genreNames = Object.values(genres).filter(val => typeof val === 'string');
 console.log(genreNames); 
 
 const genreSelect = document.querySelector('[data-search-genres]');
+const genrePlaceholderOption = document.createElement('option');
+//genrePlaceholderOption.value = 'all';
+genrePlaceholderOption.text = 'All Genres';
+genreSelect.add(genrePlaceholderOption);
+
+
 genreNames.forEach(genre => {
   const option = document.createElement('option');
   option.value = genre.toLowerCase();
@@ -112,14 +116,24 @@ genreNames.forEach(genre => {
 });
 
 
-// // add options to the genre select dropdown
-// genres.forEach((genre) => {
-//     const option = document.createElement("option");
-//     option.value = genre;
-//     option.text = genre;
-//     genreMatch.appendChild(option);
-//   });
-  
+// extract the author names from the authors object
+const authorNames = Object.values(authors).filter(val => typeof val === 'string');
+console.log(authorNames); 
+
+const authorSelect = document.querySelector('[data-search-authors]');
+const authorPlaceholderOption = document.createElement('option');
+authorPlaceholderOption.text = 'All Authors';
+authorSelect.add(authorPlaceholderOption);
+
+
+authorNames.forEach(author => {
+  const option = document.createElement('option');
+  option.value = author.toLowerCase();
+  option.text = author;
+  authorSelect.add(option);
+});
+
+
   // add options to the author select dropdown
   authors.forEach((author) => {
     const option = document.createElement("option");
@@ -145,6 +159,16 @@ searchBtn.addEventListener("click", (e) => {
     console.log(result);
   });
   
+
+
+
+
+
+
+
+
+
+
 
 
 
