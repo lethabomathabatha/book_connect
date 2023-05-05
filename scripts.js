@@ -100,8 +100,13 @@ previewOverlay.close();
 });
 
 
-
 // Theme settings functionality
+/** 
+ * @typedef {Object} theme
+ * Contains the theme settings for light and dark mode.
+
+*/
+
 settings.addEventListener("click", (e) => {
     settingsOverlay.show();
     e.preventDefault();  
