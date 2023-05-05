@@ -102,7 +102,7 @@ previewOverlay.close();
 
 
 // Theme settings functionality
-settings.addEventListener("click", () => {
+settings.addEventListener("click", (e) => {
     settingsOverlay.show();
     e.preventDefault();  
 
@@ -141,22 +141,19 @@ cancelSettings.addEventListener("click", () => {
 });
 
 
-// search functionality
+// search functionality:
 
 /**
 * @param {Event} event handles the event when the search icon is clicked,
 */
-// event listener for when the search icon is clicked, it should display a search menu overlay with options to search for books
+// event listener for when the search icon is clicked, it should display a search menu 
+// overlay with options to search for books
    
 search.addEventListener("click", () => {
     
     searchOverlay.show();
     e.preventDefault();  
-    searchForm.classList.toggle('hidden');
-          
-
-    // document.querySelector('[data-search-overlay]').classList.toggle('hidden');
-    // document.querySelectorAll('[overlay__label]').show();
+    searchForm.classList.toggle('hidden');    
 });
 
 // event listener for when the cancel button is clicked, it should close the search menu overlay
@@ -189,6 +186,10 @@ genreNames.forEach(genre => {
 });
 
 
+/**
+ * @param {authorNames} author returns all the author names in the data set as drop down list
+ * for the user to select from
+ */
 // extract the author names from the authors object
 const authorNames = Object.values(authors).filter(val => typeof val === 'string');
 console.log(authorNames); 
@@ -205,7 +206,6 @@ authorNames.forEach(author => {
   authorSelect.add(option);
 });
 
-
   // add options to the author select dropdown
   authorNames.forEach((author) => {
     const option = document.createElement("option");
@@ -217,7 +217,6 @@ authorNames.forEach(author => {
 
 
 // Genre-author filter functionality
-     
 // when user selects specific genre, display books under that genre
     genreSelect.addEventListener('change', (e) => {
         const selectedGenre = e.target.value;
@@ -232,6 +231,12 @@ authorNames.forEach(author => {
             booksByGenre.push(book);
             };
         });
+
+        // if no books are found for the selected genre, display a message to the user
+        if (booksByGenre.length === 0) {
+            const errorMessage = document.querySelector('[data-list-message]');
+            errorMessage.textContent = `No books found for the genre`;
+        }
      };
   
 // Clear the current book list and display the new list of books
