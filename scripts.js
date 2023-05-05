@@ -104,6 +104,9 @@ previewOverlay.close();
 /** 
  * @typedef {Object} theme
  * Contains the theme settings for light and dark mode.
+ *
+ *  @event submit
+ *Handles form submission and updates theme settings based on user selection.
 
 */
 
