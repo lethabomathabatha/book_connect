@@ -1,13 +1,9 @@
-import { BOOKS_PER_PAGE } from "./data.js";
-import { authors } from "./data.js";
-import { genres } from "./data.js";
-import { books } from "./data.js";
-
+import { BOOKS_PER_PAGE, authors, genres, books } from "./data.js";
 
 
 //Global query selectors:
 // settings query selectors
-const settings = document.querySelector('[data-header-settings]'); // still to locate the query selector
+const settings = document.querySelector('[data-header-settings]'); 
 const settingsOverlay = document.querySelector('[data-settings-overlay]');
 const settingsForm = document.querySelector('[data-settings-form]');
 const cancelSettings = document.querySelector('[data-settings-cancel]');
@@ -24,10 +20,84 @@ const genreMatch = document.querySelector('[data-search-genres]');
 const authorMatch = document.querySelector('[data-search-authors]');
 const searchSubmitBtn = searchForm.querySelector('button[type="submit"]'); 
 
+// list and overlay query selectors
+const list = document.querySelector("[data-list-items]");
+const loadMore = document.querySelector("[data-list-button]");
+const previewOverlay = document.querySelector("[data-list-active]");
+const closeBtn = document.querySelector("[data-list-close]")
+const titleOverlay = previewOverlay.querySelector(".overlay__title");
+const dataOverlay = previewOverlay.querySelector(".overlay__data");
+const overlayBlur = previewOverlay.querySelector(".overlay__blur");
+const overlayImage = previewOverlay.querySelector(".overlay__image");
+const infoOverlay = previewOverlay.querySelector("[data-list-description]");
 
 
+// book preview functionality
+const innerHTML = ( book, index ) => {
+  const booksElement = document.createElement("div");
+  booksElement.className = "preview";
+  booksElement.dataset.index = `${index}`;
+  booksElement.id = book.id;
+
+  booksElement.innerHTML = ` <img src = ${book.image} 
+  class = 'preview__image'  alt="${book.title} book image"></img>
+  <div class="preview__info">
+    <h3 class="preview__title">${book.title}</h3>
+    <div class="preview__author">${authors[book.author]}</div>
+  </div>`;
+
+  return booksElement;
+};
 
 
+for (let i = 0; i < BOOKS_PER_PAGE; i++) {
+  list.appendChild(innerHTML(books[i], i));
+}
+let loaded = 0;
+
+loadMore.innerHTML = `<span>Show More</span>
+<span class = "list__remaining">(
+    ${books.length - BOOKS_PER_PAGE - loaded}
+    )</span>`;
+
+const moreBooks = (e) => {
+  loaded += BOOKS_PER_PAGE;
+  let booksLeft = books.length - BOOKS_PER_PAGE - loaded;
+  let moreBtn = booksLeft > 0 ? booksLeft : 0;
+  loadMore.innerHTML = `
+  <span>Show more</span>
+  <span class = "list__remaining">(${moreBtn})</span>`;
+
+  let booksLoaded = BOOKS_PER_PAGE + loaded;
+
+  for (let i = loaded; i < booksLoaded; i++) {
+    list.appendChild(innerHTML(books[i], i));
+
+    // Disable the "Load More" button if all books have been loaded
+    if (i === books.length - 1) {
+      loadMore.disabled = true;
+    }
+  }
+};
+
+const openOverlay = (e) => {
+  const bookPreview = e.target.closest(".preview");
+  const index = bookPreview.dataset.index;
+  overlayBlur.src = books[index].image;
+  overlayImage.src = books[index].image;
+  titleOverlay.textContent = books[index].title;
+  let dateOverlay = new Date(books[index].published).getFullYear();
+  dataOverlay.textContent = `${authors[books[index].author]} (${dateOverlay})`;
+  infoOverlay.textContent = books[index].description;
+  previewOverlay.show();
+};
+
+// add event listeners to the buttons
+loadMore.addEventListener("click", moreBooks);
+list.addEventListener("click", openOverlay);
+closeBtn.addEventListener("click", () => {
+previewOverlay.close();
+});
 
 
 
@@ -146,190 +216,55 @@ authorNames.forEach(author => {
   
 
 
-
-
-
-
-  // when user selects specific genre, display books under that genre
+// Genre-author filter functionality
      
+// when user selects specific genre, display books under that genre
+    genreSelect.addEventListener('change', (e) => {
+        const selectedGenre = e.target.value;
+        let booksByGenre = [];
 
-  /*
-  genreSelect.addEventListener(('change'), (e) => {
-        e.preventDefault();
-         const genre = e.target.value;
-         const booksGenre = genre === 'all' ? bookData : bookData.filter(book => data.books.genres.includes(genre));
-         list.innerHTML = '';
-         booksGenre.forEach((book, index) => {
-             list.appendChild(innerHTML(book, index));
-         });
-         return booksGenre;
+        // If the user selects 'All Genres', display all the books, else, filter the books by the selected genre
+        if (selectedGenre === 'all') {
+        booksByGenre = bookData;
+        } else {
+        bookData.forEach(book => {
+            if (book.genres.includes(selectedGenre)) {
+            booksByGenre.push(book);
+            };
+        });
+     };
+  
+// Clear the current book list and display the new list of books
+    const bookList = document.querySelector('[data-list-items]');
+    bookList.innerHTML = '';
+  
+    booksByGenre.forEach(book => {
+       const bookCard = document.createElement('div');
+       bookCard.innerHTML = `
+         <h3>${book.title}</h3>
+        <p>${book.description}</p>
+         <img src="${book.image}" alt="${book.title}">
+       `;
+       bookList.appendChild(bookCard);
      });
-     */
-/////
-//   // when user selects specific genre, display books under that genre
-// genreSelect.addEventListener('change', (e) => {
-//     const selectedGenre = e.target.value;
-//     let booksByGenre = [];
-  
-//     if (selectedGenre === 'all') {
-//       // If the user selects 'All Genres', display all the books
-//       booksByGenre = bookData;
-//     } else {
-//       // Filter the books by the selected genre
-//       bookData.forEach(book => {
-//         if (book.genres.includes(selectedGenre)) {
-//           booksByGenre.push(book);
-//         }
-//       });
-//     }
-  
-//     // Clear the current book list and display the new list of books
-//     const bookList = document.querySelector('[data-list-items]');
-//     bookList.innerHTML = '';
-  
-//     booksByGenre.forEach(book => {
-//       const bookCard = document.createElement('div');
-//       bookCard.innerHTML = `
-//         <h3>${book.title}</h3>
-//         <p>${book.description}</p>
-//         <img src="${book.image}" alt="${book.title}">
-//       `;
-//       bookList.appendChild(bookCard);
-//     });
-//   });
-/////
+   });
 
+// when user selects specific author, display books under that author 
+authorSelect.addEventListener('change', (e) => {
+    const selectedAuthor = e.target.value;
+    let booksByAuthor = [];
 
-
-
-
-
-// retrieving books under a specific genre
-// use the number-letter string in genre to pull books with the corresponding genre number-letter string
-
-
-// // Select DOM elements
-// function renderBooks(books) {
-//     const bookList = document.createElement('ul');
-//     bookList.setAttribute('data-book-list', '');
-  
-//     books.forEach((book) => {
-//       const bookItem = document.createElement('li');
-//       bookItem.innerHTML = `
-//         <h2>${book.title}</h2>
-//         <img src="${book.image}" alt="${book.title}">
-//         <p>${book.description}</p>
-//         <ul>
-//           ${book.genres.map((genre) => `<li>${genre}</li>`).join('')}
-//         </ul>
-//       `;
-//       bookList.appendChild(bookItem);
-//     });
-  
-//     const app = document.getElementById('app');
-//     app.appendChild(bookList);
-//   }
-
-
-  
-
-
-
-
-
-
-
-/*
-const searchButton = document.querySelector('[data-search-form] button[type="submit"]');
-
-searchBtn.addEventListener('submit', (event)=> {
-  event.preventDefault(); // prevent the form from submitting
-
-  // genre filter
-  const selectedGenre = genreSelect.value;
-  const filteredBooksG = books.filter(function(book) {
-    return book.genres.includes(selectedGenre);
-  });
-
-  console.log(filteredBooksG); // replace with whatever you want to do with the filtered books
-
-
-    // author filter
-    const selectedAuthor = authorSelect.value;
-    const filteredBooks = books.filter(function(book) {
-        return book.author.includes(selectedAuthor);
-
-
+    // If the user selects 'All Authors', display all the books, else, filter the books by the selected author
+    if (selectedAuthor === 'all') {
+    booksByAuthor = bookData;
+    } else {
+    bookData.forEach(book => {
+        if (book.author === selectedAuthor) {
+        booksByAuthor.push(book);
+        };
     });
-    console.log(filteredBooks); // replace with whatever you want to do with the filtered books
-
-});
-*/
+ };
+}); 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// data-search-form.click(filters)  {
-//     preventDefault()
-//     const formData = new FormData(e.target)
-//     const filters = Object.fromEntries(formData)
-//     result = []
-//     for (books; booksList; i++) {
-//         titleMatch = filters.title.trim() = '' && book.title.toLowerCase().includes[filters.title.toLowerCase()]
-//         authorMatch = filters.author = 'any' || book.author === filters.author
-//         {
-//             genreMatch = filters.genre = 'any'
-//             for (genre; book.genres; i++) { if (singleGenre = filters.genre) { genreMatch === true }}}
-//         }
-//         if (titleMatch && authorMatch && genreMatch) result.push(book)
-//     }
-
-//     if (display.length < 1)  { 
-//     data-list-message.class.add('list__message_show')
-//     } else data-list-message.class.remove('list__message_show')
-
-//     data-list-items.innerHTML('');
-//     const fragment = document.createDocumentFragment()
-//     const extracted = source.slice(range[0], range[1])
-//     for ({ author, image, title, id }; extracted; i++) {
-//         const { author: authorId, id, image, title } = props
-//         element = document.createElement('button')
-//         element.classList = 'preview'
-//         element.setAttribute('data-preview', id)
-//         element.innerHTML /* html */ `
-//             <img
-//                 class="preview__image"
-//                 src="${image}"
-//             />
-            
-//             <div class="preview__info">
-//                 <h3 class="preview__title">${title}</h3>
-//                 <div class="preview__author">${authors[authorId]}</div>
-//             </div>
-//         `
-//         fragment.appendChild(element)
-//     }
-
-    
 
