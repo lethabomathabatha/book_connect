@@ -158,7 +158,7 @@ searchCancel.addEventListener("click", (e) => {
 const genreNames = Object.values(genres).filter(
   (val) => typeof val === "string"
 );
-console.log(genreNames);
+
 const genreSelect = document.querySelector("[data-search-genres]");
 const genrePlaceholderOption = document.createElement("option");
 genrePlaceholderOption.text = "All Genres";
@@ -179,7 +179,7 @@ genreNames.forEach((genre) => {
 const authorNames = Object.values(authors).filter(
   (val) => typeof val === "string"
 );
-console.log(authorNames);
+
 const authorSelect = document.querySelector("[data-search-authors]");
 const authorPlaceholderOption = document.createElement("option");
 authorPlaceholderOption.text = "All Authors";
@@ -233,7 +233,6 @@ searchForm.addEventListener("submit", (e) => {
     }
     for (let i = 0; i < books.length; i++) {
       if (books[i].genres.includes(genreGUID)) {
-        console.log(books[i].title);
         booksByGenre.push(books[i]);
       }
     }// if all books within the filter have been loaded, disable the load more button
@@ -258,7 +257,6 @@ searchForm.addEventListener("submit", (e) => {
     }
     for (let i = 0; i < booksByGenre.length; i++) {
       if (booksByGenre[i].author.localeCompare(authorGUID) == 0) {
-        console.log(booksByGenre[i].title);
         booksByGenreAndAuthor.push(booksByGenre[i]);
       }
     }
@@ -277,7 +275,6 @@ searchForm.addEventListener("submit", (e) => {
           .toLowerCase()
           .includes(searchTitle.toLowerCase())
       ) {
-        console.log(booksByGenreAndAuthor[i].title);
         booksByGenreAndAuthorAndTitle.push(booksByGenreAndAuthor[i]);
       }
     }
@@ -291,7 +288,6 @@ if (booksByGenreAndAuthor == 0 || booksByGenreAndAuthorAndTitle == 0 || booksByG
   const noResults = document.querySelector("[data-list-message]");
   noResults.classList.remove("hidden");
   
-  console.log(noResults);
   
 }
 });
