@@ -176,8 +176,6 @@ searchCancel.addEventListener("click", (e) => {
   e.preventDefault();
 });
 
-
-
 // extract the genre names from the genres object
 const genreNames = Object.values(genres).filter(
   (val) => typeof val === "string"
@@ -214,6 +212,7 @@ authorNames.forEach((author) => {
   option.text = author;
   authorSelect.add(option);
 });
+
 // add options to the author select dropdown
 authorNames.forEach((author) => {
   const option = document.createElement("option");
@@ -222,8 +221,12 @@ authorNames.forEach((author) => {
   authorMatch.appendChild(option);
 });
 
-// Title search functionality
-// when a user types part of a title, return all books relating to the search
+// Title Search Functionality:
+/**
+ * @param {Event} event handles the event when the user types in the search bar
+ * it should display a list of books that match the search query 
+*/
+
 // Genre-author filter functionality
 // when user selects specific genre, display books under that genre
 genreSelect.addEventListener("change", (e) => {
@@ -248,7 +251,7 @@ searchForm.addEventListener("submit", (e) => {
   if (selectedGenre.localeCompare("All Genres") == 0) {
     booksByGenre = books;
   } else {
-    //get the guid for the genre
+    // get the guid(which is the key) for the genre (which is the value) from the genres object
     let genreGUID;
     for (var key in genres) {
       if (genres[key] === selectedGenre) {
@@ -263,10 +266,8 @@ searchForm.addEventListener("submit", (e) => {
     if (booksByGenre.length <= BOOKS_PER_PAGE) {
       loadMore.disabled = true;
     }
-    
   } 
 
-    
 
   // get all books matching author from the selected genre
   if (selectedAuthor.localeCompare("All Authors") == 0) {
