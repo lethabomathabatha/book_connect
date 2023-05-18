@@ -9,7 +9,7 @@ const settingsForm = document.querySelector("[data-settings-form]");
 const cancelSettings = document.querySelector("[data-settings-cancel]");
 
 // search query selectors
-const search = document.querySelector(".header__button"); // accesses the search button
+const search = document.querySelector(".header__button"); 
 const searchOverlay = document.querySelector("[data-search-overlay]");
 const searchForm = document.querySelector("[data-search-form]");
 const searchCancel = document.querySelector("[data-search-cancel]");
@@ -309,8 +309,8 @@ searchForm.addEventListener("submit", (e) => {
     list.appendChild(innerHTML(booksByGenreAndAuthorAndTitle[i], i));
   }
   // if no books match the search criteria, display a message to the user
-if (booksByGenreAndAuthor == 0 || booksByGenreAndAuthorAndTitle == 0 || booksByGenre == 0) {
-  const noResults = document.querySelector("[data-list-message]");
-  noResults.classList.remove("hidden");
-}
-});
+  if (booksByGenreAndAuthor == 0 || booksByGenreAndAuthorAndTitle == 0 || booksByGenre == 0) {
+    const noResults = document.querySelector("[data-list-message]");
+    noResults.classList.remove("hidden");
+  }
+  });
