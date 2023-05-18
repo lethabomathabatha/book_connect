@@ -141,7 +141,7 @@ const theme = {
     });
 
 // Cancel settings selection functionality
-cancelSettings.addEventListener("click", () => {
+cancelSettings.addEventListener("click", (e) => {
     e.preventDefault();
     settingsOverlay.close();
     settingsForm.classList.toggle('hidden');
@@ -157,15 +157,14 @@ cancelSettings.addEventListener("click", () => {
 // event listener for when the search icon is clicked, it should display a search menu 
 // overlay with options to search for books
    
-search.addEventListener("click", () => {
-    
+search.addEventListener("click", (e) => {
     searchOverlay.show();
     e.preventDefault();  
     searchForm.classList.toggle('hidden');    
 });
 
 // event listener for when the cancel button is clicked, it should close the search menu overlay
-searchCancel.addEventListener('click', () => {
+searchCancel.addEventListener('click', (e) => {
     searchOverlay.close();
     e.preventDefault();  
 
