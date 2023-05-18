@@ -83,6 +83,10 @@ const moreBooks = (e) => {
 };
 
 
+/**
+ * @param {Event} e handles the event when the search icon is clicked.
+ * The search overlay is displayed when the search icon is clicked.
+ * */
 const openOverlay = (e) => {
   const bookPreview = e.target.closest(".preview");
   const index = bookPreview.dataset.index;
@@ -101,10 +105,14 @@ list.addEventListener("click", openOverlay);
 closeBtn.addEventListener("click", () => {
   previewOverlay.close();
 });
+
+
 // Theme settings functionality
 /**
  * @typedef {Object} theme
  * Contains the theme settings for light and dark mode.
+ * @property {string} day.dark - The dark mode color for the day theme. @property {string} day.light - The light mode color for the day theme.
+ * @property {string} night.dark - The dark mode color for the night theme. @property {string} night.light - The light mode color for the night theme.
  *
  *  @event submit
  *Handles form submission and updates theme settings based on user selection.
@@ -115,6 +123,7 @@ settings.addEventListener("click", (e) => {
   settingsForm.classList.toggle("hidden");
   document.querySelector("[data-settings-overlay]").classList.toggle("hidden");
 });
+
 const theme = {
   day: {
     dark: "10, 10, 20",
@@ -139,6 +148,7 @@ settingsForm.addEventListener("submit", (e) => {
   );
   settingsOverlay.close();
 });
+
 // Cancel settings selection functionality
 cancelSettings.addEventListener("click", (e) => {
   e.preventDefault();
@@ -148,12 +158,13 @@ cancelSettings.addEventListener("click", (e) => {
 });
 
 
-// search functionality:
+// Search Functionality:
 /**
  * @param {Event} event handles the event when the search icon is clicked,
- */
-// event listener for when the search icon is clicked, it should display a search menu
-// overlay with options to search for books
+ * it should display a search menu overlay with options to search for books
+ * 
+*/
+
 search.addEventListener("click", (e) => {
   searchOverlay.show();
   e.preventDefault();
