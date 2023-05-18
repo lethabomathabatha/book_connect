@@ -179,7 +179,6 @@ searchForm.addEventListener('submit', (e) => {
 
 // extract the genre names from the genres object
 const genreNames = Object.values(genres).filter(val => typeof val === 'string');
-console.log(genreNames); 
 
 const genreSelect = document.querySelector('[data-search-genres]');
 const genrePlaceholderOption = document.createElement('option');
@@ -200,7 +199,6 @@ genreNames.forEach(genre => {
  */
 // extract the author names from the authors object
 const authorNames = Object.values(authors).filter(val => typeof val === 'string');
-console.log(authorNames); 
 
 const authorSelect = document.querySelector('[data-search-authors]');
 const authorPlaceholderOption = document.createElement('option');
