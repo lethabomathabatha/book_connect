@@ -29,7 +29,14 @@ const infoOverlay = previewOverlay.querySelector("[data-list-description]");
 let selectedGenre = "All Genres";
 let selectedAuthor = "All Authors";
 
-// book preview functionality
+// Book Preview Functionality
+/**
+ * @param {Object} book
+ * @param {number} index
+ * @returns {Object} booksElement
+ * Creates a book preview element with the book image, title and author.
+ * The book preview element is then appended to the list element. The book preview element is then returned.
+ * */
 const innerHTML = (book, index) => {
   const booksElement = document.createElement("div");
   booksElement.className = "preview";
@@ -287,7 +294,5 @@ searchForm.addEventListener("submit", (e) => {
 if (booksByGenreAndAuthor == 0 || booksByGenreAndAuthorAndTitle == 0 || booksByGenre == 0) {
   const noResults = document.querySelector("[data-list-message]");
   noResults.classList.remove("hidden");
-  
-  
 }
 });
