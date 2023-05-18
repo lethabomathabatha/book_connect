@@ -26,8 +26,8 @@
       rel="stylesheet"
     />
 
-    <script src="./scripts.js"></script>
-    <script src="./data.js"></script>
+    <script src="./scripts.js" defer type="module"></script>
+    <script src="./data.js" defer type="module"></script>
   </head>
   <body>
 
@@ -98,7 +98,7 @@
 
 
     <dialog class="overlay" data-list-active>
-      <div class="overlay__preview"><img class="overlay__blur" data-list-blur src=""/><img class="overlay__image" data-list-image src=""/></div>
+      <div class="overlay__preview"><img class="overlay__blur" data-list-blur src=" "/><img class="overlay__image" data-list-image src=" "/></div>
       <div class="overlay__content">
         <h3 class="overlay__title" data-list-title></h3>
         <div class="overlay__data" data-list-subtitle></div>
@@ -116,12 +116,12 @@
         <form class="overlay__form" data-search-form id="search">
           <label class="overlay__field">
             <div class="overlay__label">Title</div>
-            <input class="overlay__input" data-search-title name="title" placeholder="Any"></input>
+            <input class="overlay__input" data-search-title name="title" placeholder="Any">
           </label>
 
           <label class="overlay__field">
             <div class="overlay__label">Genre</div>
-            <select class="overlay__input overlay__input_select" data-search-genres name="genre"></select>
+            <select class="overlay__input overlay__input_select" data-search-genres name="genre" ></select>
           </label>
 
           <label class="overlay__field">
