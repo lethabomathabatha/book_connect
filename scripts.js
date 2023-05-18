@@ -58,6 +58,12 @@ loadMore.innerHTML = `<span>Show More</span>
 <span class = "list__remaining">(
     ${books.length - BOOKS_PER_PAGE - loaded}
     )</span>`;
+
+/**
+ * @param {Event} e handles the event when the "Load More" button is clicked.
+ * The "Load More" button is enabled when there are more books to load.
+ * The "Load More" button is disabled when all books have been loaded.
+ * */
 const moreBooks = (e) => {
   loaded += BOOKS_PER_PAGE;
   let booksLeft = books.length - BOOKS_PER_PAGE - loaded;
